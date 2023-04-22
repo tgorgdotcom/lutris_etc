@@ -1,0 +1,182 @@
+name: "Star Wars: Rogue Squadron 3D"
+game_slug: star-wars-rogue-squadron
+runner: wine
+version: Installer (for disc images)
+slug: star-wars-rogue-squadron-installer
+
+script:
+  # note lutris doesn't recursively translate variables, so variables shouldn't be in variables
+  variables:
+    GAMESUBDIR: "drive_c/Program Files/LucasArts/ROGUE"
+    REGROOT: 'HKEY_LOCAL_MACHINE\Software\LucasArts Entertainment Company LLC\Rogue Squadron\v1.0'
+  files:
+  - rogue-iso: 'N/A:The Disc image to mount prior to playing.'
+  - rogue-update: https://github.com/medfreeman/RogueSquadron3DInstaller/raw/master/assets/update/rogueupd12.exe
+  - nglide: https://www.zeus-software.com/files/nglide/nGlide105_setup.exe
+  game:
+    arch: win32
+    exe: "$GAMEDIR/$GAMESUBDIR/rogue.exe"
+    prefix: $GAMEDIR
+    launch_configs:
+    - exe: "$GAMEDIR/drive_c/windows/system32/nglide_config.exe"
+      name: nGlide Configurator
+  system:
+    env:
+      DISC_IMAGE: rogue-iso
+  installer:
+  - insert-disc:
+      requires: rogue.exe
+  - task:
+      name: create_prefix
+      arch: win32
+  - task:
+      app: dsound
+      arch: win32
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      description: Enable Windows 98 compatibility mode
+      key: Version
+      arch: win32
+      name: set_regedit
+      path: HKEY_CURRENT_USER\Software\Wine
+      prefix: $GAMEDIR
+      value: win98
+  - execute:
+      command: 'mkdir "$GAMEDIR/drive_c/Program Files/LucasArts" &&
+        mkdir "$GAMEDIR/$GAMESUBDIR" &&
+        mkdir "$GAMEDIR/$GAMESUBDIR/DATA" &&
+        mkdir "$GAMEDIR/$GAMESUBDIR/DATA/OUT"'
+  - execute:
+      command: 'cp "$DISC/install/dsetup.dll" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/install/dsetup16.dll" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/install/dsetup32.dll" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/install/instdx50.exe" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/install/license.txt" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/install/readme.txt" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/install/register.exe" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/install/website.exe" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/rogue.exe" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/rogue/bundle.000" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/rogue/bundle.001" "$GAMEDIR/$GAMESUBDIR"'
+  # retail v1.0.0 release does not include bundle.002 
+  - execute:
+      command: "cp '$DISC/rogue/bundle.002' '$GAMEDIR/$GAMESUBDIR' || echo 'bundle.002 not found, skipping...'"
+  - execute:
+      command: 'cp "$DISC/rogue/bundle.003" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/rogue/iforce2.dll" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/rogue/rogue squadron.exe" "$GAMEDIR/$GAMESUBDIR" &&
+        cp "$DISC/rogue/data/out/data.dat" "$GAMEDIR/$GAMESUBDIR/DATA/OUT" &&
+        cp "$DISC/rogue/data/out/data.hdr" "$GAMEDIR/$GAMESUBDIR/DATA/OUT"'
+  - execute:
+      command: 'chmod -R 774 "$GAMEDIR/drive_c/Program Files/LucasArts"'
+  - task:
+      description: Installing nGlide
+      executable: ${nglide}
+      name: wineexec
+      prefix: $GAMEDIR
+      arch: win32
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: 3DSetup
+      value: "TRUE"
+      type: REG_SZ
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: Analyze Path
+      value: 'D:\\install\\SysCheck.exe'
+      type: REG_SZ
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: CD Path
+      value: "D:"
+      type: REG_SZ
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: Executable
+      value: 'C:\\Program Files\\LucasArts\\ROGUE\\Rogue Squadron.EXE'
+      type: REG_SZ
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: Install Path
+      value: 'C:\\Program Files\\LucasArts\\ROGUE'
+      type: REG_SZ
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: InstallType
+      value: '00000009'
+      type: REG_DWORD
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: JoystickID
+      value: "1"
+      type: REG_SZ
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: SoundCard
+      value: "TRUE"
+      type: REG_SZ
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: Source Dir
+      value: 'D:\\'
+      type: REG_SZ
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: Source Path
+      value: "D:"
+      type: REG_SZ
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      name: set_regedit
+      path: $REGROOT
+      key: VDEVICE
+      value: "Voodoo (Glide)"
+      type: REG_SZ
+      arch: win32
+      prefix: $GAMEDIR
+  - task:
+      arch: win32
+      description: Installing Rogue Squadron 1.2 update
+      executable: ${rogue-update}
+      name: wineexec
+      prefix: $GAMEDIR
+  - task:
+      key: Magic
+      name: set_regedit
+      arch: win32
+      path: $REGROOT
+      prefix: $GAMEDIR
+      type: REG_DWORD
+      value: '000927d8'
+  - execute:
+      command: 'echo "017B889: B800 0000 0090 90" | xxd -r - "$GAMEDIR/$GAMESUBDIR/rogue squadron.exe"'

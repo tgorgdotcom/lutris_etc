@@ -1,0 +1,42 @@
+name: "Virtua Fighter 2"
+game_slug: virtua-fighter-2
+runner: wine
+version: Installer (for disc images)
+slug: virtua-fighter-2-installer
+
+script:
+  files:
+  - vf2-iso: 'N/A:The Disc image to mount prior to playing.'
+  - vf2-update: https://github.com/tgorgdotcom/lutris_etc/raw/main/bin/VF2.EXE
+  game:
+    arch: win32
+    exe: "$GAMEDIR/drive_c/SEGA/VF2/VF2.EXE"
+    prefix: $GAMEDIR
+  system:
+    env:
+      DISC_IMAGE: vf2-iso
+      xephyr: 16bpp
+      xephyr_resolution: 800x600
+  installer:
+  - insert-disc:
+      requires: VF2
+  - task:
+      name: create_prefix
+      arch: win32
+  - task:
+      description: Enable Windows 98 compatibility mode
+      key: Version
+      arch: win32
+      name: set_regedit
+      path: HKEY_CURRENT_USER\Software\Wine
+      prefix: $GAMEDIR
+      value: win98
+  - task:
+      description: Running installation
+      executable: $DISC/Setup.exe
+      name: wineexec
+      prefix: $GAMEDIR
+      arch: win32
+  - copy:
+      src: vf2-update
+      dst: "$GAMEDIR/drive_c/SEGA/VF2"

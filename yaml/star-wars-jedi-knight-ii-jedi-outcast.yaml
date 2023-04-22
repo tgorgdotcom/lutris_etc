@@ -1,0 +1,30 @@
+name: "Star Wars: Jedi Knight 2 - Jedi Outcast"
+game_slug: star-wars-jedi-knight-ii-jedi-outcast
+runner: linux
+version: Installer
+slug: star-wars-jedi-knight-ii-jedi-outcast-installer
+
+# based on https://lutris.net/games/install/11482/view
+script:
+  files:
+  - jedi-outcast-bin: https://lutris.net/files/games/jedi-outcast/jedi-outcast-i386.tar.gz
+  - patch-1.04-file1: https://github.com/emileb/OpenGames/raw/master/jk2/src/main/assets/assets2.pk3
+  - patch-1.04-file2: https://github.com/emileb/OpenGames/raw/master/jk2/src/main/assets/assets5.pk3
+  game:
+    exe: jk2sp
+  installer:
+  - insert-disc:
+      requires: GameData/GameData/jk2sp.exe
+  - execute:
+      command: 'cp -a "$DISC/GameData/GameData/." "$GAMEDIR" &&
+        chmod -R 774 "$GAMEDIR"'
+  - move:
+      dst: $GAMEDIR/base
+      src: patch-1.04-file1
+  - move:
+      dst: $GAMEDIR/base
+      src: patch-1.04-file2
+  - extract:
+      file: jedi-outcast-bin
+  - execute:
+      command: 'chmod -R 774 "$GAMEDIR"'
