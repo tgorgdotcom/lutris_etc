@@ -1,6 +1,6 @@
 [target]
 title0=Virtua Fighter 2 (DXPatch)
-path0=?\VF2.EXE
+path0="C:\SEGA\VF2\VF2.EXE"
 startfolder0=
 launchpath0="C:\SEGA\VF2\VF2.EXE"
 cmdline0=
