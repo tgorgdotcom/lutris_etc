@@ -8,15 +8,21 @@ script:
   files:
   - vf2-iso: 'N/A:The Disc image to mount prior to playing.'
   - vf2-update: https://github.com/tgorgdotcom/lutris_etc/raw/main/bin/VF2.EXE
+  - dxwnd: https://github.com/tgorgdotcom/lutris_etc/raw/main/bin/v2_06_06_build.rar
+  - vf2-dxw: https://github.com/tgorgdotcom/lutris_etc/raw/main/dxw/virtua-fighter-2-dxpatch.dxw
   game:
     arch: win32
-    exe: "$GAMEDIR/drive_c/SEGA/VF2/VF2.EXE"
+    args: "/C:virtua-fighter-2-dxpatch.dxw /R:1"
+    working_dir: "$GAMEDIR/drive_c/dxwnd"
+    exe: "$GAMEDIR/drive_c/dxwnd/dxwnd.exe"
     prefix: $GAMEDIR
+    launch_configs:
+    - exe: "$GAMEDIR/drive_c/dxwnd/dxwnd.exe"
+      args: "/C:virtua-fighter-2-dxpatch.dxw"
+      name: dxwnd configuration
   system:
     env:
       DISC_IMAGE: vf2-iso
-      xephyr: 16bpp
-      xephyr_resolution: 800x600
   installer:
   - insert-disc:
       requires: VF2
@@ -40,3 +46,9 @@ script:
   - copy:
       src: vf2-update
       dst: "$GAMEDIR/drive_c/SEGA/VF2"
+  - extract:
+      file: dxwnd
+      dst: $GAMEDIR/drive_c/dxwnd
+  - copy:
+      src: vf2-dxw
+      dst: "$GAMEDIR/drive_c/dxwnd"
